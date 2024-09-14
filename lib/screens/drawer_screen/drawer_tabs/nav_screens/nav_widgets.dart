@@ -718,31 +718,31 @@ class LineUpItemsWidget extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            height: 26,
-            width: 26,
-            decoration: const BoxDecoration(
-              color: blackColor,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                number,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: whiteColor,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
+        // Positioned(
+        //   top: 0,
+        //   left: 0,
+        //   child: Container(
+        //     height: 26,
+        //     width: 26,
+        //     decoration: const BoxDecoration(
+        //       color: blackColor,
+        //       shape: BoxShape.circle,
+        //     ),
+        //     child: Center(
+        //       child: Text(
+        //         number,
+        //         maxLines: 1,
+        //         overflow: TextOverflow.ellipsis,
+        //         textAlign: TextAlign.center,
+        //         style: const TextStyle(
+        //           color: whiteColor,
+        //           fontSize: 9,
+        //           fontWeight: FontWeight.w600,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

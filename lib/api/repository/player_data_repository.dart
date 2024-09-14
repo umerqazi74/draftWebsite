@@ -9,7 +9,7 @@ class PlayersDataRepository {
   Future getPlayersData() async {
     try {
       bool isDraft = isDraftPage??false;
-      // await storeWalletValue("0xD5037920E24bc0862580C445162C194e07Ef80f8");
+
       String userWalletAddress = await loadWalletValue();
 
       var apiUrl = "https://fhgwe79cnd.us-east-1.awsapprunner.com/get_players/";
@@ -23,8 +23,11 @@ class PlayersDataRepository {
       //   'UserAddress': '0xD5037920E24bc0862580C445162C194e07Ef80f8',
       // };
 
+      // 0x2f3757723e52a75c0ab76154cfe9da46628e8d9170c81
+
       final headers = {
         'UserAddress': isDraft?"":userWalletAddress,
+        // 'UserAddress': "0xD5037920E24bc0862580C445162C194e07Ef80f8",
       };
 
       var response = await http.get(

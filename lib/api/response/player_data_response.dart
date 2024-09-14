@@ -1,5 +1,6 @@
 class PlayersDataResponse {
   List<Tokens>? tokens;
+  LoanData? loanData;
   bool? error;
   String? errorMsg;
 
@@ -7,6 +8,7 @@ class PlayersDataResponse {
     this.tokens,
     this.error,
     this.errorMsg,
+    this.loanData
   });
 
   PlayersDataResponse.fromJson(Map<String, dynamic> json) {
@@ -16,6 +18,9 @@ class PlayersDataResponse {
         tokens!.add(Tokens.fromJson(v));
       });
     }
+    loanData = json['loan_data'] != null
+        ? new LoanData.fromJson(json['loan_data'])
+        : null;
     error = json['error'];
     errorMsg = json['errorMsg'];
   }
@@ -24,6 +29,9 @@ class PlayersDataResponse {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (tokens != null) {
       data['tokens'] = tokens!.map((v) => v.toJson()).toList();
+    }
+    if (loanData != null) {
+      data['loan_data'] = loanData!.toJson();
     }
     data['error'] = error;
     data['errorMsg'] = errorMsg;
@@ -136,6 +144,28 @@ class Tokens {
     data['team_name'] = teamName;
     data['status'] = status;
     data['birthday'] = birthday;
+    return data;
+  }
+}
+
+class LoanData {
+  int? numLoanedPlayers;
+  int? numLoanedPossible;
+  bool? isLoanable;
+
+  LoanData({this.numLoanedPlayers, this.numLoanedPossible, this.isLoanable});
+
+  LoanData.fromJson(Map<String, dynamic> json) {
+    numLoanedPlayers = json['num_loaned_players'];
+    numLoanedPossible = json['num_loaned_possible'];
+    isLoanable = json['is_loanable'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['num_loaned_players'] = numLoanedPlayers;
+    data['num_loaned_possible'] = numLoanedPossible;
+    data['is_loanable'] = isLoanable;
     return data;
   }
 }

@@ -1,7 +1,9 @@
 import 'package:draft_website/core/consts.dart';
+import 'package:draft_website/screens/drawer_screen/drawer_tabs/nav_screens/line_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'api/repository/formation_checker.dart';
 import 'screens/login_screen/login_screen.dart';
 import 'screens/responsive_screen.dart';
 
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       // home: const LoginScreen(),
       home: const ResponsivePage(),
+      // home:  LineUpScreen(),
       // home: const ResponsivePage(),
     );
   }

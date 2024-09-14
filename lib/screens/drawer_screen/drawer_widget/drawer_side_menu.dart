@@ -177,32 +177,46 @@ class _DrawerSideMenuState extends State<DrawerSideMenu> {
   bool isConnected = false;
   isWalletAddressExist() async {// Function to check if wallet address exists
 
-    ethereum!.onAccountsChanged((accounts) {//account change
 
-      if(accounts.isNotEmpty){
-        setState(() {
-          isConnected = true;
-        });
-      }else{
+    final accs = await ethereum!.requestAccount(); //we request address from the account
 
-        ethereum!.onDisconnect((listener){
-          setState(() {
-            isConnected = false;
-          });
-        });
-      }
-    });
-
-    bool connection = ethereum!.isConnected();
-    if(connection){
+    if (accs.isNotEmpty){
       setState(() {
         isConnected = true;
       });
-    }else{
+    } //assign current address to first address
+    ethereum!.onDisconnect((listener){
       setState(() {
         isConnected = false;
       });
-    }
+    });
+
+    // ethereum!.onAccountsChanged((accounts) {//account change
+    //
+    //   if(accounts.isNotEmpty){
+    //     setState(() {
+    //       isConnected = true;
+    //     });
+    //   }else{
+    //
+    //     ethereum!.onDisconnect((listener){
+    //       setState(() {
+    //         isConnected = false;
+    //       });
+    //     });
+    //   }
+    // });
+    //
+    // bool connection = ethereum!.isConnected();
+    // if(connection){
+    //   setState(() {
+    //     isConnected = true;
+    //   });
+    // }else{
+    //   setState(() {
+    //     isConnected = false;
+    //   });
+    // }
 
   }
 

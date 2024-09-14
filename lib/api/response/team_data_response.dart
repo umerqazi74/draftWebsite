@@ -1,13 +1,13 @@
 
 import 'dart:convert';
 
-class TeamDataModel {
+class TeamDataResponse {
   TeamMetaData? teamMetaData;
   List<dynamic>? players;
   bool? error;
   String? errorMsg;
 
-  TeamDataModel({
+  TeamDataResponse({
     this.teamMetaData,
     this.players,
     this.error,
@@ -15,7 +15,7 @@ class TeamDataModel {
   });
 
   // Factory method to create a `TeamDataModel` instance from JSON
-  TeamDataModel.fromJson(Map<String, dynamic> json) {
+  TeamDataResponse.fromJson(Map<String, dynamic> json) {
     teamMetaData = json['team_meta_data'] != null
         ? TeamMetaData.fromJson(json['team_meta_data'])
         : null;

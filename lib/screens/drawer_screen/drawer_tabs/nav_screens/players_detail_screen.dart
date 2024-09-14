@@ -1,10 +1,25 @@
+import 'package:draft_website/api/repository/loan_player_repository.dart';
+import 'package:draft_website/api/response/player_data_response.dart';
+import 'package:draft_website/api/response/post_response_model.dart';
 import 'package:draft_website/core/clickable_widget.dart';
 import 'package:draft_website/core/consts.dart';
 import 'package:draft_website/screens/drawer_screen/drawer_tabs/nav_screens/nav_widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_web3/ethereum.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../api/repository/player_data_repository.dart';
+import '../../../../core/button_widget.dart';
+import '../../../../core/common_methods.dart';
+import '../../../../meta_mask_feature/meta_mask_provider.dart';
 
 class PlayerDetailScreen extends StatefulWidget {
+  final Tokens tokens;
+  final bool isDraft;
   final Function()? onBackTap;
   final double speed,
       shootPrecision,
@@ -44,6 +59,8 @@ class PlayerDetailScreen extends StatefulWidget {
     required this.name,
     required this.dob,
     required this.status,
+    required this.tokens,
+    required this.isDraft,
   });
 
   @override
@@ -51,6 +68,13 @@ class PlayerDetailScreen extends StatefulWidget {
 }
 
 class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // isWalletAddressExist();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -318,6 +342,66 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
                         ),
                       ],
                     ),
+
+                    !widget.isDraft?SizedBox(height: 1,width: 1,):
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ButtonWidget(
+                          height: 35,
+                          width: 120,
+                          text: "Buy",
+                          borderRadius: 10,
+                          btnColor: const Color(0xFF1976D2),
+                          borderColor: const Color(0xFF1976D2),
+                          textColor: whiteColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          onPressed: () {
+                            _launchUrl(widget.tokens.openseaUrl.toString());
+                          },
+                        ),
+
+
+                        ChangeNotifierProvider(                                                  //Change the provider
+                          create: (context) => MetaMaskProvider()..init(),                              //create an instant
+                          builder: (context, child) {
+                            return Stack(
+                                children: [
+                                  Center(
+                                    child: Consumer<MetaMaskProvider>(
+                                      builder: (context, provider, child) {
+                                        late final String text;                                               //check the state and display it
+
+                                        if (provider.isConnected && provider.isInOperatingChain) {
+                                          isWalletAddressExist();
+                                          text = 'Connected';//connected
+                                          print(provider.currentAddress);
+
+                                          return buttonWidgetToLoan();
+
+
+                                        } else if (provider.isEnabled) {
+                                          context.read<MetaMaskProvider>().connect();
+
+                                        }
+
+                                        return buttonWidgetToLoan();
+                                      },
+                                    ),
+                                  ),
+
+                                ],
+                              );
+                          },
+                        ),
+
+
+
+
+                      ],
+                    )
+
                   ],
                 ),
               )
@@ -327,4 +411,77 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
       ],
     );
   }
+
+  bool apiCalling = false;
+  bool isConnected = false;
+  bool isLoanAllow = false;
+  String address = "";
+  isWalletAddressExist() async {// Function to check if wallet address exists
+
+    final accs = await ethereum!.requestAccount();
+      if (accs.isNotEmpty){
+        PlayersDataRepository playerDR = PlayersDataRepository();
+        await playerDR.storeWalletValue(accs.first);
+        final responseResult = await playerDR.getPlayersData();
+        PlayersDataResponse playersDataResponse = PlayersDataResponse.fromJson(responseResult);
+        print(playersDataResponse.loanData!.isLoanable!);
+        print(playersDataResponse.loanData!.numLoanedPossible!);
+        address = accs.first;
+        setState(() {
+          isLoanAllow = playersDataResponse.loanData!.isLoanable!;
+          isConnected = true;
+        });
+      } //assign current address to first address
+
+
+    ethereum!.onDisconnect((listener){
+      setState(() {
+        isConnected = false;
+      });
+    });
+
+  }
+
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+
+  Widget buttonWidgetToLoan()=> apiCalling? SpinKitFadingCircle(color: mainAppColor, size: 30,) :ButtonWidget(
+    height: 35,
+    width: 120,
+    text: "Loan",
+    borderRadius: 10,
+    btnColor: widget.tokens.status=="free" && isConnected && isLoanAllow? Colors.green:Colors.grey.shade400,
+    borderColor: widget.tokens.status=="free" && isConnected && isLoanAllow? Colors.green:Colors.grey.shade400,
+    textColor: whiteColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    onPressed: () async {
+      if(widget.tokens.status=="free" && isConnected && isLoanAllow){
+
+        setState(() {
+          apiCalling = true;
+        });
+
+        LoanPlayerRepository loanPlayerRep = LoanPlayerRepository();
+        final responseResult = await loanPlayerRep.getLoanPlayer(widget.tokens.id.toString());
+        PostResponseModel postResModel = PostResponseModel.fromJson(responseResult);
+        if(postResModel.error==true){
+          SnackBarClass snb = SnackBarClass();
+          snb.snackBarMethod(context: context, text: postResModel.errorMsg.toString());
+        }else{
+          SnackBarClass snb = SnackBarClass();
+          snb.snackBarMethod(context: context, text: "Player Loaned Successfully!");
+        }
+
+        setState(() {
+          apiCalling = false;
+        });
+
+      }
+    },);
+
 }

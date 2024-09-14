@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:draft_website/api/response/team_data_response.dart';
 import 'package:draft_website/core/clickable_widget.dart';
 import 'package:draft_website/core/consts.dart';
 import 'package:draft_website/screens/drawer_screen/drawer_tabs/nav_screens/nav_widgets.dart';
@@ -7,19 +8,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../data_models/team_model.dart';
 
 class TeamDetailScreen extends StatefulWidget {
   final Function()? onBackTap;
   final Function(int)? onFileTap;
-  final TeamDataModel? teamDataModel;
+  final TeamDataResponse? teamDataResponse;
 
 
   const TeamDetailScreen({
     super.key,
     this.onBackTap,
     this.onFileTap,
-    this.teamDataModel,
+    this.teamDataResponse,
   });
 
   @override
@@ -48,7 +48,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Uint8List imageBytes = base64Decode(widget.teamDataModel!.teamMetaData!.teamLogo.toString());
+    Uint8List imageBytes = base64Decode(widget.teamDataResponse!.teamMetaData!.teamLogo.toString());
     return Column(
       children: <Widget>[
         InkWellWidget(
@@ -74,7 +74,8 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
           height: 200,
           width: double.infinity,
           margin: const EdgeInsets.only(top: 40, bottom: 24),
-          padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 30),
+          // padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 0),
+          padding: const EdgeInsets.only(left: 17,right: 17,top: 25),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             image: const DecorationImage(
@@ -86,47 +87,36 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   // SvgPicture.asset("assets/web_icons/abc_team.svg"),
                   SizedBox(
-                    width: 38,
-                      height: 53,
+                    width: 150,
+                      height: 150,
                       child: Image.memory(imageBytes)),
                   const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                         Text(
-                          widget.teamDataModel!.teamMetaData!.teamName.toString(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: whiteColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        // Text(
-                        //   // "Small and Consices headline",
-                        //   "",
-                        //   maxLines: 1,
-                        //   overflow: TextOverflow.ellipsis,
-                        //   style: TextStyle(
-                        //     color: whiteColor.withOpacity(.72),
-                        //     fontSize: 14,
-                        //     fontWeight: FontWeight.w600,
-                        //   ),
-                        // ),
-                      ],
-                    ),
+                  Text(
+                   widget.teamDataResponse!.teamMetaData!.teamName.toString(),
+                   maxLines: 1,
+                   overflow: TextOverflow.ellipsis,
+                   style: TextStyle(
+                     color: whiteColor,
+                     fontSize: 16,
+                     fontWeight: FontWeight.w700,
+                   ),
                   ),
+
+                  SizedBox(width:40,),
+
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
+                      SizedBox(height: 100,),
                       Text(
                         "CREATED",
                         maxLines: 1,
@@ -138,7 +128,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                         ),
                       ),
                        Text(
-                        widget.teamDataModel!.teamMetaData!.dateTime.toString(),
+                        widget.teamDataResponse!.teamMetaData!.dateTime.toString(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:draft_website/api/response/team_data_response.dart';
 import 'package:draft_website/core/button_widget.dart';
 import 'package:draft_website/core/consts.dart';
-import 'package:draft_website/data_models/team_model.dart';
 import 'package:draft_website/screens/drawer_screen/drawer_tabs/home/home_widgets.dart';
 import 'package:draft_website/screens/drawer_screen/drawer_tabs/nav_screens/friendly_screen.dart';
 import 'package:draft_website/screens/drawer_screen/drawer_tabs/nav_screens/line_up_screen.dart';
@@ -147,7 +147,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
               ),
               !isShowTeamDetail?SizedBox():
               TeamDetailScreen(
-                teamDataModel: teamDataModel,
+                teamDataResponse: teamDataResponse,
                 onBackTap: () {
                   setState(() {
                     // isShowTeamDetail = false;
@@ -155,12 +155,30 @@ class _TeamsScreenState extends State<TeamsScreen> {
                 },
                 onFileTap: (int index) {
                   setState(() {
-                    // isShowTeamDetail = false;
-                    // isShowTeamInfo = true;
-                    // fileIndex = index;
+
+                    if(index==2){
+                      isShowTeamDetail = false;
+                      isShowTeamInfo = true;
+                     fileIndex = index;
+                    }
+
                   });
                 },
               ),
+
+
+              fileIndex == 2 && isShowTeamInfo
+                  ? LineUpScreen(
+                onBackTap: () {
+                  setState(() {
+                    fileIndex = -1;
+                    isShowTeamInfo = false;
+                    isShowTeamDetail = true;
+                  });
+                },
+              ):SizedBox(),
+
+
 
               // isShowTeamDetail
               //     ? TeamDetailScreen(
@@ -185,7 +203,9 @@ class _TeamsScreenState extends State<TeamsScreen> {
               //               });
               //             },
               //           )
-              //         : fileIndex == 0 && isShowTeamInfo
+              //         :
+              //
+              //         fileIndex == 0 && isShowTeamInfo
               //             ? TeamInfoScreen(
               //                 onBackTap: () {
               //                   setState(() {
@@ -327,6 +347,9 @@ class _TeamsScreenState extends State<TeamsScreen> {
               //                                         },
               //                                       ),
               //                                     ),
+
+
+
             ],
           ),
         ),
@@ -337,7 +360,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
 
   bool apiCalling = false;
   bool error = false;
-  TeamDataModel? teamDataModel;
+  TeamDataResponse? teamDataResponse;
   teamChecker() async {
 
     setState(() {
@@ -346,11 +369,11 @@ class _TeamsScreenState extends State<TeamsScreen> {
 
     TeamRepository createTeamRep = TeamRepository();
     final responseResult = await createTeamRep.getTeamData();
-     teamDataModel = TeamDataModel.fromJson(responseResult);
-     if(teamDataModel!.error==true){
-       print(teamDataModel!.errorMsg);
+     teamDataResponse = TeamDataResponse.fromJson(responseResult);
+     if(teamDataResponse!.error==true){
+       print(teamDataResponse!.errorMsg);
        SnackBarClass snb = SnackBarClass();
-       snb.snackBarMethod(context: context, text: teamDataModel!.errorMsg.toString());
+       snb.snackBarMethod(context: context, text: teamDataResponse!.errorMsg.toString());
 
        setState(() {
          apiCalling = false;
@@ -361,7 +384,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
        });
 
 
-     }else if(teamDataModel!.teamMetaData==null){
+     }else if(teamDataResponse!.teamMetaData==null){
 
        print("has no team");
        // print(teamDataModel!.teamMetaData!.teamName);
@@ -373,10 +396,10 @@ class _TeamsScreenState extends State<TeamsScreen> {
        });
 
      }else{
-       print(teamDataModel!.teamMetaData!.homeColor);
-       print(teamDataModel!.teamMetaData!.outColor);
+       print(teamDataResponse!.teamMetaData!.homeColor);
+       print(teamDataResponse!.teamMetaData!.outColor);
        setState(() {
-         teamDataModel;
+         teamDataResponse;
          apiCalling = false;
          error = false;
          isShowTeamDetail = true;
