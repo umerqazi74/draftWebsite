@@ -415,6 +415,7 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
   bool apiCalling = false;
   bool isConnected = false;
   bool isLoanAllow = false;
+  bool loanTaken = false;
   String address = "";
   isWalletAddressExist() async {// Function to check if wallet address exists
 
@@ -454,13 +455,13 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
     width: 120,
     text: "Loan",
     borderRadius: 10,
-    btnColor: widget.tokens.status=="free" && isConnected && isLoanAllow? Colors.green:Colors.grey.shade400,
-    borderColor: widget.tokens.status=="free" && isConnected && isLoanAllow? Colors.green:Colors.grey.shade400,
+    btnColor: widget.tokens.status=="free" && isConnected && isLoanAllow && !loanTaken? Colors.green:Colors.grey.shade400,
+    borderColor: widget.tokens.status=="free" && isConnected && isLoanAllow && !loanTaken? Colors.green:Colors.grey.shade400,
     textColor: whiteColor,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     onPressed: () async {
-      if(widget.tokens.status=="free" && isConnected && isLoanAllow){
+      if(widget.tokens.status=="free" && isConnected && isLoanAllow && !loanTaken){
 
         setState(() {
           apiCalling = true;
@@ -475,6 +476,9 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
         }else{
           SnackBarClass snb = SnackBarClass();
           snb.snackBarMethod(context: context, text: "Player Loaned Successfully!");
+          setState(() {
+            loanTaken = true;
+          });
         }
 
         setState(() {

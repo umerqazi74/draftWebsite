@@ -6,6 +6,7 @@ import 'package:draft_website/screens/drawer_screen/drawer_tabs/teams/teams_scre
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 import 'meta_mask_provider.dart';
@@ -50,34 +51,47 @@ class _MetaMaskConnectorState extends State<MetaMaskConnector> {
                       text =
                       'Wrong chain. Please connect to ${MetaMaskProvider.operatingChain}';            //wrong chain, what chain it should be connected to
                     } else if (provider.isEnabled) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Click to connect...'),
-                          const SizedBox(height: 8),
-                          CupertinoButton(
-                            onPressed: () =>
-                                context.read<MetaMaskProvider>().connect(),                               //call metamask on click
-                            color: Colors.white,
-                            padding: const EdgeInsets.all(0),
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: whiteColor,
-                                border: Border.all(color: Colors.grey.shade200)
+                      return StreamBuilder(
+                        stream: _delayedStream(),
+                        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(
+                              child: SpinKitFadingCircle(
+                                color: mainAppColor,
+                                size: 30,
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.network(
-                                    'https://i0.wp.com/kindalame.com/wp-content/uploads/2021/05/metamask-fox-wordmark-horizontal.png?fit=1549%2C480&ssl=1',
-                                    width: 300,
+                            ); // Show a loading indicator while waiting
+                          }
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('Click to connect...'),
+                              const SizedBox(height: 8),
+                              CupertinoButton(
+                                onPressed: () =>
+                                    context.read<MetaMaskProvider>().connect(),                               //call metamask on click
+                                color: Colors.white,
+                                padding: const EdgeInsets.all(0),
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: whiteColor,
+                                      border: Border.all(color: Colors.grey.shade200)
                                   ),
-                                ],
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.network(
+                                        'https://i0.wp.com/kindalame.com/wp-content/uploads/2021/05/metamask-fox-wordmark-horizontal.png?fit=1549%2C480&ssl=1',
+                                        width: 300,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
+                            ],
+                          );
+                        },
                       );
                     } else {
                       text = 'Please install MetaMask';                           //please use web3 supported browser
@@ -96,19 +110,25 @@ class _MetaMaskConnectorState extends State<MetaMaskConnector> {
                   },
                 ),
               ),
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: Image.network(
-                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTicLAkhCzpJeu9OV-4GOO-BOon5aPGsj_wy9ETkR4g-BdAc8U2-TooYoiMcPcmcT48H7Y&usqp=CAU',
-                    fit: BoxFit.cover,
-                    opacity: const AlwaysStoppedAnimation(0.025),
-                  ),
-                ),
-              ),
+              // Positioned.fill(
+              //   child: IgnorePointer(
+              //     child: Image.network(
+              //       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTicLAkhCzpJeu9OV-4GOO-BOon5aPGsj_wy9ETkR4g-BdAc8U2-TooYoiMcPcmcT48H7Y&usqp=CAU',
+              //       fit: BoxFit.cover,
+              //       opacity: const AlwaysStoppedAnimation(0.025),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         );
       },
     );
   }
+
+  Stream<String> _delayedStream() async* {
+    await Future.delayed(const Duration(seconds: 2)); // Wait for 3 seconds
+    yield 'Hello after 3 seconds!'; // Emit data after the delay
+  }
+
 }

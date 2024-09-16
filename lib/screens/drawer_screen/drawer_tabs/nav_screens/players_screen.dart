@@ -340,8 +340,8 @@ class _PlayersScreenState extends State<PlayersScreen> {
   }
 
   Stream<String> _delayedStream() async* {
-    await Future.delayed(const Duration(seconds: 2)); // Wait for 3 seconds
-    yield 'Hello after 3 seconds!'; // Emit data after the delay
+    await Future.delayed(const Duration(seconds: 0)); // Wait for 3 seconds
+    yield 'Hello after 0 seconds!'; // Emit data after the delay
   }
 
   bool clickToAdd = false;
