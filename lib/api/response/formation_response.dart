@@ -78,17 +78,17 @@ class FormationResponse {
 }
 
 class Formation {
-  List<List<int>> formationMatrix;
+  List<List<String>>? formationMatrix;
 
   Formation(this.formationMatrix);
 
   factory Formation.fromJson(List<dynamic> json) {
-    List<List<int>> matrix = json.map((row) => List<int>.from(row)).toList();
+    List<List<String>> matrix = json.map((row) => List<String>.from(row)).toList();
     return Formation(matrix);
   }
 
   List<dynamic> toJson() {
-    return formationMatrix.map((row) => row.toList()).toList();
+    return formationMatrix!.map((row) => row.toList()).toList();
   }
 }
 

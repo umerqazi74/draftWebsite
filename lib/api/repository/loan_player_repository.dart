@@ -15,9 +15,6 @@ class LoanPlayerRepository{
 
     const String url = 'https://fhgwe79cnd.us-east-1.awsapprunner.com/loan_player/';
 
-    print("ye address hai: $userWalletAddress");
-    print("ye id hai: $playerId");
-
     // Define the headers
     Map<String, String> headers = {
       "UserAddress": userWalletAddress,  // Passing actual userWalletAddress value here

@@ -43,7 +43,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return error?Center(child: Text("Something went wrong!"),):
+    return error?const Center(child: Text("Something went wrong!"),):
     apiCalling?const Center(child: SpinKitFadingCircle(
       color: mainAppColor,
       size: 30,),) :
@@ -137,7 +137,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
               // ),
               const SizedBox(height: 20),
 
-              !isShowCreateTeam?SizedBox():
+              !isShowCreateTeam?const SizedBox():
               TeamInfoScreen(
                 onBackTap: () {
                   setState(() {
@@ -145,7 +145,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                   });
                 },
               ),
-              !isShowTeamDetail?SizedBox():
+              !isShowTeamDetail?const SizedBox():
               TeamDetailScreen(
                 teamDataResponse: teamDataResponse,
                 onBackTap: () {
@@ -169,14 +169,16 @@ class _TeamsScreenState extends State<TeamsScreen> {
 
               fileIndex == 2 && isShowTeamInfo
                   ? LineUpScreen(
+                savedFormation: teamDataResponse!.formation,
                 onBackTap: () {
+                  teamChecker();
                   setState(() {
                     fileIndex = -1;
                     isShowTeamInfo = false;
                     isShowTeamDetail = true;
                   });
                 },
-              ):SizedBox(),
+              ):const SizedBox(),
 
 
 
@@ -396,8 +398,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
        });
 
      }else{
-       print(teamDataResponse!.teamMetaData!.homeColor);
-       print(teamDataResponse!.teamMetaData!.outColor);
+
        setState(() {
          teamDataResponse;
          apiCalling = false;

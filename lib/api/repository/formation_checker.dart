@@ -7,6 +7,8 @@ import '../response/formation_response.dart';
 
 
 class FormationDropdownScreen extends StatefulWidget {
+  const FormationDropdownScreen({super.key});
+
   @override
   _FormationDropdownScreenState createState() => _FormationDropdownScreenState();
 }
